@@ -34,7 +34,7 @@ const renderer = function(content) {
 
         //Render delete hive button
         const deleteHiveBtn = document.createElement('button');
-        deleteHiveBtn.classList.add('deletedHiveBtn');
+        deleteHiveBtn.classList.add('deleteHiveBtn');
         deleteHiveBtn.textContent = '-';
         deleteHiveBtn.id = hive.getIndex() + "";
         deleteHiveBtn.addEventListener('click', (e) => {
