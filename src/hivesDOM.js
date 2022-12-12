@@ -11,19 +11,20 @@ const renderer = function(content) {
      * @private
      */
     let _hives = [];
+    let _numberOfTasks = 0;
 
     /**
-     * Render a hive
+     *
      * @param hive
+     * @param color
      */
-
-    let _numberOfTasks = 0;
-    const renderHive = function(hive) {
+    const renderHive = function(hive, color) {
         //Update _hives and set the hive index property
         hive.setIndex(_hives.length);
         _hives.push(hive);
         //Begin rendering of hive
         const renderedHive = document.createElement('div');
+        renderedHive.style.backgroundColor = color;
         renderedHive.classList.add('renderedHive');
         renderedHive.id = 'hive-' + hive.getIndex();
 
@@ -32,28 +33,40 @@ const renderer = function(content) {
         renderedTitle.textContent = hive.getTitle();
         renderedHive.appendChild(renderedTitle);
 
+
+
+        //Render expansion functionality
+        const clickListen = document.createElement('div');
+        clickListen.classList.add('clickListen');
+        clickListen.dataset.clickOf = renderedHive.id;
+        clickListen.addEventListener('click', _expandHive);
+        renderedHive.appendChild(clickListen);
+
+        content.appendChild(renderedHive);
+    }
+    const deleteHiveBtn = function (renderedHive) {
         //Render delete hive button
         const deleteHiveBtn = document.createElement('button');
         deleteHiveBtn.classList.add('deleteHiveBtn');
         deleteHiveBtn.textContent = '-';
-        deleteHiveBtn.id = hive.getIndex() + "";
+        deleteHiveBtn.id = renderedHive.id.substring(5);
         deleteHiveBtn.addEventListener('click', (e) => {
             //delete current hive
             _hives.splice(parseInt(e.target.id), 1);
-            document.querySelector('#hive-'+e.target.id).remove();
+            renderedHive.remove();
+            //un-focus deleted hive
+            document.querySelector('.blurScreen').remove();
         });
         renderedHive.appendChild(deleteHiveBtn);
-
+    }
+    const addTaskBtn = function(renderedHive) {
         //Render add task button
         const addTaskBtn = document.createElement('button');
-        addTaskBtn.textContent = 'Add Task';
-        addTaskBtn.setAttribute('id', hive.getIndex()+"");
-        console.log('hive index: ' + addTaskBtn.id)
+        addTaskBtn.textContent = '+Task';
+        addTaskBtn.setAttribute('id', renderedHive.id.substring(5));
         addTaskBtn.classList.add('addTaskBtn');
         addTaskBtn.addEventListener('click', _addTaskBtnEvent);
         renderedHive.appendChild(addTaskBtn);
-
-        content.appendChild(renderedHive);
     }
     const _addTaskBtnEvent = function (e) {
         //Query task
@@ -102,7 +115,6 @@ const renderer = function(content) {
         addTaskForm.appendChild(addTaskSubmitBtn);
 
         document.querySelector('#hive-' + e.target.id).appendChild(addTaskForm);
-        console.log('#hive-' + e.target.id);
     }
 
     /**
@@ -112,7 +124,6 @@ const renderer = function(content) {
      * @private
      */
     const _renderTask = function(hiveID, newTask) {
-        console.log(hiveID);
         const renderedTask = document.createElement('div');
         renderedTask.classList.add('renderedTask');
         renderedTask.setAttribute('id', "task-"+_numberOfTasks);
@@ -177,12 +188,18 @@ const renderer = function(content) {
         newHiveTitle.classList.add('newHiveTitle');
         addHiveForm.appendChild(newHiveTitle);
 
+        const newHiveColor = document.createElement('input');
+        newHiveColor.type = 'color';
+        newHiveColor.value = '#eab308'
+        newHiveColor.classList.add('newHiveColor');
+        addHiveForm.appendChild(newHiveColor);
+
         const addHiveSubmit = document.createElement('button');
         addHiveSubmit.textContent = '+';
         addHiveSubmit.classList.add('addHiveSubmit');
         addHiveSubmit.addEventListener('click', () => {
-            const newHive = hive(document.querySelector('#newHiveTitle').value === ""? "New Project": document.querySelector('#newHiveTitle').value );
-            renderHive(newHive);
+            const newHive = hive(document.querySelector('#newHiveTitle').value === ""? "New Hive": document.querySelector('#newHiveTitle').value );
+            renderHive(newHive, newHiveColor.value);
             addHiveForm.remove();
             content.appendChild(addHiveBtn);
         });
@@ -190,9 +207,54 @@ const renderer = function(content) {
 
         content.appendChild(addHiveForm);
     }
+
+    const _expandHive = function(e) {
+        const expHive = document.querySelector('#'+e.target.dataset.clickOf);
+        expHive.classList.add('expandedHive');
+        expHive.removeEventListener('click', _expandHive);
+        const clickListen = e.target;
+        clickListen.remove();
+
+        //Render add task button
+        addTaskBtn(expHive);
+
+        //Render delete hive button
+        deleteHiveBtn(expHive);
+
+        //show delete task buttons
+        if(expHive.contains(document.querySelector('.deleteTaskBtn'))) {
+            document.querySelectorAll('.deleteTaskBtn').forEach(btn => {btn.style.visibility = 'visible'});
+        }
+
+        const blurScreen = document.createElement('div');
+        blurScreen.classList.add('blurScreen');
+        content.appendChild(blurScreen);
+
+        blurScreen.addEventListener('click', e => {
+            blurScreen.remove();
+            expHive.classList.remove('expandedHive');
+
+            //reverse renderings
+            if((expHive.contains(document.querySelector('.addTaskForm')))) {
+                document.querySelector('.addTaskForm').remove();
+            }
+            if(expHive.contains(document.querySelector('.addTaskBtn'))) {
+                document.querySelector('.addTaskBtn').remove();
+            }
+            if(expHive.contains(document.querySelector('.deleteTaskBtn'))) {
+                document.querySelectorAll('.deleteTaskBtn').forEach(btn => {btn.style.visibility = 'hidden'});
+            }
+
+            document.querySelector(('.deleteHiveBtn')).remove();
+            expHive.appendChild(clickListen);
+        });
+
+    }
+
+
     const load = function () {
-        const blankHive = hive('New Project');
-        renderHive(blankHive);
+        const blankHive = hive('My First Hive!');
+        renderHive(blankHive, '#eab308');
         _addHiveBtn();
     }
     return {

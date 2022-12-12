@@ -40,10 +40,16 @@ const task = function(title, description, dueDate, priority, index) {
 /**
  * Create a hive that hosts tasks
  */
-const hive = function(title) {
+const hive = function(title, color) {
     let _index = 0;
     let _tasks = [];
     return{
+        setColor: function(newColor) {
+            color = newColor;
+        },
+        getColor: function () {
+            return newColor;
+        },
         setTitle : function (newT) {
             title = newT;
         },
