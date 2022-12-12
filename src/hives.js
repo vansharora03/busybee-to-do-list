@@ -1,7 +1,7 @@
 /**
  * Create a task for a hive
  */
-const task = function(title, description, dueDate, priority) {
+const task = function(title, description, dueDate, priority, index) {
     let _index = 0;
     return{
         setTitle : function(newTitle) {
@@ -41,7 +41,7 @@ const task = function(title, description, dueDate, priority) {
  * Create a hive that hosts tasks
  */
 const hive = function(title) {
-    let _index;
+    let _index = 0;
     let _tasks = [];
     return{
         setTitle : function (newT) {
@@ -51,12 +51,14 @@ const hive = function(title) {
             return title;
         },
         registerTask : function(task) {
+            task.setIndex(_tasks.length);
             _tasks.push(task);
         },
         getTasks : function () {
             return _tasks;
         },
-        removeTask : function (i) {
+        removeTask : function (task) {
+            const i = task.getIndex();
             _tasks.splice(i, 1);
         },
         getIndex : function () {
