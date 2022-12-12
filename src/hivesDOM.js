@@ -48,6 +48,7 @@ const renderer = function(content) {
         const addTaskBtn = document.createElement('button');
         addTaskBtn.textContent = 'Add Task';
         addTaskBtn.setAttribute('id', hive.getIndex()+"");
+        console.log('hive index: ' + addTaskBtn.id)
         addTaskBtn.classList.add('addTaskBtn');
         addTaskBtn.addEventListener('click', _addTaskBtnEvent);
         renderedHive.appendChild(addTaskBtn);
@@ -56,7 +57,7 @@ const renderer = function(content) {
     }
     const _addTaskBtnEvent = function (e) {
         //Query task
-        const addTaskBtn = document.querySelector('.addTaskBtn');
+        const addTaskBtn = e.target;
         addTaskBtn.remove();
 
         const addTaskForm = document.createElement('div');
@@ -101,6 +102,7 @@ const renderer = function(content) {
         addTaskForm.appendChild(addTaskSubmitBtn);
 
         document.querySelector('#hive-' + e.target.id).appendChild(addTaskForm);
+        console.log('#hive-' + e.target.id);
     }
 
     /**
