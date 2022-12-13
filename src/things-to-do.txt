@@ -1,1 +1,5 @@
-- Add
+- Add the styles for tasks
+- Pin bee icon somehow to allow compatibility with other systems
+- Add local storage capability
+- Add priority dropdown select or radio buttons
+- Add side panel for viewing different priorities
