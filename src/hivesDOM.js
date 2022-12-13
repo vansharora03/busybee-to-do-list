@@ -12,7 +12,7 @@ const renderer = function(content) {
      */
     let _hives = [];
     let _numberOfTasks = 0;
-    let _defaultColors = ['#84cc16', '#fb923c', '#fb7185', '#818cf8', '#06b6d4', '#ef4444', '#fde047'];
+    let _defaultColors = ['#bef264', '#fcd34d', '#fda4af', '#a5b4fc', '#f87171', '#86efac', '#94a3b8'];
     let _colorRotation = 0;
 
     /**
@@ -51,7 +51,10 @@ const renderer = function(content) {
         //Render delete hive button
         const deleteHiveBtn = document.createElement('button');
         deleteHiveBtn.classList.add('deleteHiveBtn');
-        deleteHiveBtn.textContent = '-';
+
+        const trashCan = document.createElement('img');
+        trashCan.src = 'images/trash.svg';
+        deleteHiveBtn.appendChild(trashCan);
         deleteHiveBtn.id = renderedHive.id.substring(5);
         deleteHiveBtn.addEventListener('click', (e) => {
             //delete current hive
