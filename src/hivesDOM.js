@@ -22,6 +22,7 @@ const renderer = function(content) {
      */
     const renderHive = function(hive, color) {
         //Update _hives and set the hive index property
+        console.log(_hives);
         hive.setIndex(_hives.length);
         _hives.push(hive);
         //Begin rendering of hive
@@ -58,8 +59,22 @@ const renderer = function(content) {
         deleteHiveBtn.id = renderedHive.id.substring(5);
         deleteHiveBtn.addEventListener('click', (e) => {
             //delete current hive
-            _hives.splice(parseInt(e.target.id), 1);
+            _hives.splice(parseInt(deleteHiveBtn.id), 1);
             renderedHive.remove();
+            //update indices of all entries in _hive after current hive to i-1, update their id's
+            for(let i = 0; i < _hives.length; i++) {
+                const currentHive = document.querySelector('#hive-'+_hives[i].getIndex());
+                currentHive.id = 'hive-'+i;
+                _hives[i].setIndex(i);
+                //update clickListen
+                currentHive.querySelector('.clickListen').dataset.clickOf = currentHive.id;
+                //update deleteTaskBtn
+                if(currentHive.contains(currentHive.querySelector('.deleteTaskBtn'))) {
+                    currentHive.querySelectorAll('.deleteTaskBtn').forEach(btn => {btn.dataset.tasksOf = currentHive.id});
+                }
+
+            }
+
             //un-focus deleted hive
             document.querySelector('.blurScreen').remove();
             document.querySelector('body').style.overflowY = 'auto';
@@ -159,9 +174,12 @@ const renderer = function(content) {
         const deleteTaskBtn = document.createElement('button');
         deleteTaskBtn.classList.add('deleteTaskBtn');
         deleteTaskBtn.textContent = '-';
+        deleteTaskBtn.dataset.tasksOf = hiveID.substring(1);
         deleteTaskBtn.setAttribute('id', _numberOfTasks+"");
         deleteTaskBtn.addEventListener('click', (e) => {
-            const currentHive = _hives[parseInt(hiveID.substring(6))];
+            const currentHive = _hives[parseInt(deleteTaskBtn.dataset.tasksOf.substring(5))];
+
+            console.log(deleteTaskBtn.dataset.tasksOf.substring(5));
             currentHive.removeTask(newTask);
             document.querySelector('#task-' + e.target.id).remove();
         })
@@ -209,6 +227,7 @@ const renderer = function(content) {
         addHiveSubmit.addEventListener('click', () => {
             const newHive = hive(document.querySelector('#newHiveTitle').value === ""? "New Hive": document.querySelector('#newHiveTitle').value );
             renderHive(newHive, newHiveColor.value);
+            console.log(document.querySelectorAll('.renderedHive'));
             addHiveForm.remove();
             content.appendChild(addHiveBtn);
         });
