@@ -62,6 +62,8 @@ const renderer = function(content) {
             renderedHive.remove();
             //un-focus deleted hive
             document.querySelector('.blurScreen').remove();
+            document.querySelector('body').style.overflowY = 'auto';
+            content.style.overflowY = 'auto';
         });
         renderedHive.appendChild(deleteHiveBtn);
     }
@@ -255,6 +257,7 @@ const renderer = function(content) {
                 expHive.querySelectorAll('.deleteTaskBtn').forEach(btn => {btn.style.visibility = 'hidden'});
             }
             document.querySelector('body').style.overflowY = 'auto';
+            content.style.overflowY = 'auto';
 
             expHive.querySelector(('.deleteHiveBtn')).remove();
             expHive.appendChild(clickListen);
