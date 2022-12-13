@@ -12,6 +12,8 @@ const renderer = function(content) {
      */
     let _hives = [];
     let _numberOfTasks = 0;
+    let _defaultColors = ['#84cc16', '#fb923c', '#fb7185', '#818cf8', '#06b6d4', '#ef4444', '#fde047'];
+    let _colorRotation = 0;
 
     /**
      *
@@ -27,6 +29,7 @@ const renderer = function(content) {
         renderedHive.style.backgroundColor = color;
         renderedHive.classList.add('renderedHive');
         renderedHive.id = 'hive-' + hive.getIndex();
+        console.log(renderedHive.id);
 
         const renderedTitle = document.createElement('h2');
         renderedTitle.classList.add('renderedTitle');
@@ -153,7 +156,7 @@ const renderer = function(content) {
         deleteTaskBtn.textContent = '-';
         deleteTaskBtn.setAttribute('id', _numberOfTasks+"");
         deleteTaskBtn.addEventListener('click', (e) => {
-            const currentHive = _hives[parseInt(hiveID.substring(5))];
+            const currentHive = _hives[parseInt(hiveID.substring(6))];
             currentHive.removeTask(newTask);
             document.querySelector('#task-' + e.target.id).remove();
         })
@@ -190,7 +193,8 @@ const renderer = function(content) {
 
         const newHiveColor = document.createElement('input');
         newHiveColor.type = 'color';
-        newHiveColor.value = '#eab308'
+        newHiveColor.value = _defaultColors[_colorRotation++];
+        _colorRotation = _colorRotation > 6? 0 : _colorRotation;
         newHiveColor.classList.add('newHiveColor');
         addHiveForm.appendChild(newHiveColor);
 
@@ -215,6 +219,9 @@ const renderer = function(content) {
         const clickListen = e.target;
         clickListen.remove();
 
+        document.querySelector('body').style.overflow = 'hidden';
+        content.style.overflowY = 'hidden';
+
         //Render add task button
         addTaskBtn(expHive);
 
@@ -222,30 +229,31 @@ const renderer = function(content) {
         deleteHiveBtn(expHive);
 
         //show delete task buttons
-        if(expHive.contains(document.querySelector('.deleteTaskBtn'))) {
-            document.querySelectorAll('.deleteTaskBtn').forEach(btn => {btn.style.visibility = 'visible'});
+        if(content.contains(document.querySelector('.deleteTaskBtn'))) {
+            expHive.querySelectorAll('.deleteTaskBtn').forEach(btn => {btn.style.visibility = 'visible'});
         }
 
         const blurScreen = document.createElement('div');
         blurScreen.classList.add('blurScreen');
         content.appendChild(blurScreen);
 
-        blurScreen.addEventListener('click', e => {
+        blurScreen.addEventListener('click', () => {
             blurScreen.remove();
             expHive.classList.remove('expandedHive');
 
             //reverse renderings
             if((expHive.contains(document.querySelector('.addTaskForm')))) {
-                document.querySelector('.addTaskForm').remove();
+                expHive.querySelector('.addTaskForm').remove();
             }
             if(expHive.contains(document.querySelector('.addTaskBtn'))) {
-                document.querySelector('.addTaskBtn').remove();
+                expHive.querySelector('.addTaskBtn').remove();
             }
-            if(expHive.contains(document.querySelector('.deleteTaskBtn'))) {
-                document.querySelectorAll('.deleteTaskBtn').forEach(btn => {btn.style.visibility = 'hidden'});
+            if(content.contains(document.querySelector('.deleteTaskBtn'))) {
+                expHive.querySelectorAll('.deleteTaskBtn').forEach(btn => {btn.style.visibility = 'hidden'});
             }
+            document.querySelector('body').style.overflowY = 'auto';
 
-            document.querySelector(('.deleteHiveBtn')).remove();
+            expHive.querySelector(('.deleteHiveBtn')).remove();
             expHive.appendChild(clickListen);
         });
 
@@ -254,7 +262,7 @@ const renderer = function(content) {
 
     const load = function () {
         const blankHive = hive('My First Hive!');
-        renderHive(blankHive, '#eab308');
+        renderHive(blankHive, _defaultColors[6]);
         _addHiveBtn();
     }
     return {

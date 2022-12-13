@@ -1,7 +1,7 @@
 /**
  * Create a task for a hive
  */
-const task = function(title, description, dueDate, priority, index) {
+const task = function(title, description, dueDate, priority) {
     let _index = 0;
     return{
         setTitle : function(newTitle) {
@@ -48,7 +48,7 @@ const hive = function(title, color) {
             color = newColor;
         },
         getColor: function () {
-            return newColor;
+            return color;
         },
         setTitle : function (newT) {
             title = newT;
