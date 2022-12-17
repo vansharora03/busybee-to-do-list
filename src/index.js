@@ -1,5 +1,4 @@
-import {renderer} from "./hivesDOM";
+import { renderer } from "./hivesDOM";
 
-const content = document.querySelector('#content');
-
+const content = document.querySelector("#content");
 renderer(content).load();
