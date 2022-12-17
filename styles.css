@@ -56,7 +56,7 @@ body {
     height: 50px;
 }
 
-#header>h1 {
+#header > h1 {
     color: var(--header-text-color);
     text-align: center;
     justify-self: center;
@@ -65,7 +65,7 @@ body {
     display: flex;
 }
 
-#header>p {
+#header > p {
 
     margin-top: 5px;
     justify-self: center;
@@ -91,7 +91,7 @@ button:hover {
     grid-template-columns: repeat(auto-fit, 30vw);
     grid-auto-rows: 30vh;
     justify-content: center;
-    gap: calc(9vh/7);
+    gap: calc(9vh / 7);
 }
 
 .renderedHive {
@@ -109,7 +109,7 @@ button:hover {
     border: 2px solid var(--hive-border-color);
     border-radius: 3vh;
 
-    color:var(--content-text-color);
+    color: var(--content-text-color);
 
     position: relative;
 }
@@ -142,7 +142,8 @@ button:hover {
 
     background: transparent;
 }
-.deleteHiveBtn>img:hover {
+
+.deleteHiveBtn > img:hover {
     content: url('images/trash-2.svg');
 }
 
@@ -292,8 +293,8 @@ input::placeholder, textarea::placeholder {
     width: 100%;
     position: absolute;
     top: 0;
-    left:0;
-    
+    left: 0;
+
 }
 
 
