@@ -223,6 +223,7 @@ input::placeholder, textarea::placeholder {
 
 .addHiveForm input {
     border: 1px solid var(--addHiveBtn-bg-color);
+    color: var(--addHiveBtn-bg-color);
 }
 
 
