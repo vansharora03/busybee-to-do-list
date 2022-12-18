@@ -9,13 +9,13 @@
 }
 
 :root {
-    --main-bg-color: #a1a1aa;
-    --header-text-color: #facc15;
-    --header-bg-color: #27272a;
+    --main-bg-color: #27272a;
+    --header-text-color: #27272a;
+    --header-bg-color: #fbbf24;
     --deleteHive-bg-color: #fef08a;
     --addHiveBtn-bg-color: #e2e8f0;
     --addHiveBtnHover-bg-color: #cbd5e1;
-    --header-border-color: #292524;
+    --header-border-color: #18181b;
     --add-task-submit-btn-color: #1c1917;
     --add-task-submit-btn-color-hover: #78716c;
     --add-task-submit-btn-text-color: #e7e5e4;
@@ -34,17 +34,22 @@ body {
 
 #header {
     background: var(--header-bg-color);
-    font-family: "Courier New";
-    font-size: 1.2rem;
+    font-family: "Baskerville Old Face";
+    font-size: 1.4rem;
     border-bottom: 8px solid var(--header-border-color);
     display: flex;
 
     position: relative;
 
-    height: 10vh;
+    height: 5vh;
 
     margin-bottom: 20px;
     padding: 10px;
+    transition: height 1s ease-in-out;
+}
+
+#header:hover {
+    height: 10vh;
 }
 
 .bee {
@@ -109,8 +114,6 @@ button:hover {
     flex-direction: column;
     align-items: start;
 
-    border: 2px solid var(--hive-border-color);
-    border-radius: 3vh;
 
     color: var(--content-text-color);
 
@@ -204,7 +207,7 @@ input, textarea {
     margin-bottom: 10px;
     border-radius: 5px;
     outline: none;
-    border: 1px solid var(--add-task-submit-btn-color);
+    border: 1px solid var(--header-text-color);
     background: transparent;
     resize: none;
 }
@@ -212,6 +215,14 @@ input, textarea {
 input::placeholder, textarea::placeholder {
     font-family: sans-serif;
     color: var(--content-text-color);
+}
+
+.addHiveForm input::placeholder  {
+    color: var(--addHiveBtn-bg-color);
+}
+
+.addHiveForm input {
+    border: 1px solid var(--addHiveBtn-bg-color);
 }
 
 
