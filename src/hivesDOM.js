@@ -149,7 +149,7 @@ const renderer = function (content, passedStorage) {
       const newTask = task(
         addTaskTitle.value,
         addTaskDescription.value,
-        format(addTaskDueDate.valueAsDate, "MM-dd-yyyy"),
+        format(addTaskDueDate.valueAsDate.addDays(1), "MM-dd-yyyy"),
         addTaskPriority.value
       );
       const currentHive = _hives[parseInt(e.target.id)];
@@ -160,6 +160,12 @@ const renderer = function (content, passedStorage) {
     addTaskForm.appendChild(addTaskSubmitBtn);
 
     document.querySelector("#hive-" + e.target.id).appendChild(addTaskForm);
+  };
+
+  Date.prototype.addDays = function (days) {
+    let date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
   };
 
   /**
@@ -197,7 +203,6 @@ const renderer = function (content, passedStorage) {
     deleteTaskBtn.classList.add("deleteTaskBtn");
     deleteTaskBtn.textContent = "-";
     deleteTaskBtn.dataset.tasksOf = hiveID.substring(1);
-    deleteTaskBtn.style.visibility = "hidden";
     deleteTaskBtn.setAttribute("id", _numberOfTasks + "");
     deleteTaskBtn.addEventListener("click", (e) => {
       const currentHive =
@@ -376,6 +381,9 @@ const renderer = function (content, passedStorage) {
       hive.getTasks().forEach((task) => {
         _renderTask("#hive-" + hive.getIndex(), task);
       });
+    });
+    document.querySelectorAll(".deleteTaskBtn").forEach((btn) => {
+      btn.style.visibility = "hidden";
     });
     addHiveBtn();
   };
