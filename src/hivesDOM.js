@@ -53,6 +53,9 @@ const renderer = function (content, passedStorage) {
 
     content.appendChild(renderedHive);
 
+    //populate in case of hive addition
+    populate();
+
     return renderedHive;
   };
   const deleteHiveBtn = function (renderedHive) {
@@ -195,6 +198,7 @@ const renderer = function (content, passedStorage) {
     deleteTaskBtn.classList.add("deleteTaskBtn");
     deleteTaskBtn.textContent = "-";
     deleteTaskBtn.dataset.tasksOf = hiveID.substring(1);
+    deleteTaskBtn.style.visibility = "hidden";
     deleteTaskBtn.setAttribute("id", _numberOfTasks + "");
     deleteTaskBtn.addEventListener("click", (e) => {
       const currentHive =
@@ -327,8 +331,13 @@ const renderer = function (content, passedStorage) {
     _hives.forEach((hive) => {
       storageValue += `"hive-${i}":`;
       storageValue += `{\n"title": "${hive.getTitle()}",\n"color": "${hive.getColor()}",\n"index": "${hive.getIndex()}",\n"tasks": {`;
+      let j = 0;
       hive.getTasks().forEach((task) => {
-        storageValue += `"title": "${task.getTitle()}",\n"description": "${task.getDescription()}",\n"dueDate": "${task.getDueDate()}",\n"priority": "${task.getPriority()}"}\n`;
+        storageValue += `"task-${j}": {"title": "${task.getTitle()}",\n"description": "${task.getDescription()}",\n"dueDate": "${task.getDueDate()}",\n"priority": "${task.getPriority()}"}\n`;
+        if (j < hive.getTasks().length - 1) {
+          storageValue += ",";
+        }
+        j++;
       });
       storageValue += "}\n}\n";
       if (i < _hives.length - 1) {
@@ -365,6 +374,9 @@ const renderer = function (content, passedStorage) {
     set();
     _hivesToBeLoaded.forEach((hive) => {
       renderHive(hive);
+      hive.getTasks().forEach((task) => {
+        _renderTask("#hive-" + hive.getIndex(), task);
+      });
     });
     addHiveBtn();
   };
