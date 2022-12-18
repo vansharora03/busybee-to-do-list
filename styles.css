@@ -48,12 +48,15 @@ body {
 }
 
 .bee {
-    position: absolute;
-    top: 35px;
-    left: 210px;
-
+    position: relative;
+    left: 10px;
     width: 50px;
     height: 50px;
+    transition: 1s ease-in-out;
+}
+
+.bee:hover {
+    transform: rotate(360deg);
 }
 
 #header > h1 {
