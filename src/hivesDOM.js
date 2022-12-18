@@ -4,13 +4,14 @@ import { format } from "date-fns";
 /**
  * Take a DOM object as a parameter and returns functions allowing rendering of hives
  */
-const renderer = function (content) {
+const renderer = function (content, passedStorage) {
   /**
    * Store the current hives
    * @type {*[]}
    * @private
    */
   let _hives = [];
+  let _hivesToBeLoaded = [];
   let _numberOfTasks = 0;
   let _defaultColors = [
     "#bef264",
@@ -22,19 +23,19 @@ const renderer = function (content) {
     "#94a3b8",
   ];
   let _colorRotation = 0;
+  let storageValue;
 
   /**
    *
    * @param hive
-   * @param color
    */
-  const renderHive = function (hive, color) {
+  const renderHive = function (hive) {
     //Update _hives and set the hive index property
     hive.setIndex(_hives.length);
     _hives.push(hive);
     //Begin rendering of hive
     const renderedHive = document.createElement("div");
-    renderedHive.style.backgroundColor = color;
+    renderedHive.style.backgroundColor = hive.getColor();
     renderedHive.classList.add("renderedHive");
     renderedHive.id = "hive-" + hive.getIndex();
 
@@ -51,6 +52,8 @@ const renderer = function (content) {
     renderedHive.appendChild(clickListen);
 
     content.appendChild(renderedHive);
+
+    return renderedHive;
   };
   const deleteHiveBtn = function (renderedHive) {
     //Render delete hive button
@@ -61,7 +64,7 @@ const renderer = function (content) {
     trashCan.src = "images/trash.svg";
     deleteHiveBtn.appendChild(trashCan);
     deleteHiveBtn.id = renderedHive.id.substring(5);
-    deleteHiveBtn.addEventListener("click", (e) => {
+    deleteHiveBtn.addEventListener("click", () => {
       //delete current hive
       _hives.splice(parseInt(deleteHiveBtn.id), 1);
       renderedHive.remove();
@@ -87,6 +90,9 @@ const renderer = function (content) {
       document.querySelector(".blurScreen").remove();
       document.querySelector("body").style.overflowY = "auto";
       content.style.overflowY = "auto";
+
+      //populate in case of hive removal
+      populate();
     });
     renderedHive.appendChild(deleteHiveBtn);
   };
@@ -196,8 +202,12 @@ const renderer = function (content) {
 
       currentHive.removeTask(newTask);
       document.querySelector("#task-" + e.target.id).remove();
+      //populate in the case of task removal;
+      populate();
     });
     renderedTask.appendChild(deleteTaskBtn);
+    //populate in case of task addition
+    populate();
 
     document.querySelector(hiveID).appendChild(renderedTask);
     _numberOfTasks++;
@@ -207,7 +217,7 @@ const renderer = function (content) {
    * Create a button with the ability to add a new hive
    * @private
    */
-  const _addHiveBtn = function () {
+  const addHiveBtn = function () {
     const addHiveBtn = document.createElement("button");
     addHiveBtn.classList.add("addHiveBtn");
     addHiveBtn.id = "addHiveBtn";
@@ -242,9 +252,12 @@ const renderer = function (content) {
       const newHive = hive(
         document.querySelector("#newHiveTitle").value === ""
           ? "New Hive"
-          : document.querySelector("#newHiveTitle").value
+          : document.querySelector("#newHiveTitle").value,
+        newHiveColor.value
       );
-      renderHive(newHive, newHiveColor.value);
+      renderHive(newHive);
+      //populate in case of hive addition
+      populate();
       addHiveForm.remove();
       content.appendChild(addHiveBtn);
     });
@@ -304,13 +317,67 @@ const renderer = function (content) {
     });
   };
 
-  const load = function () {
-    const blankHive = hive("My First Hive!");
-    renderHive(blankHive, _defaultColors[6]);
-    _addHiveBtn();
+  const getHives = function returnHives() {
+    return _hives;
+  };
+
+  const populate = function populateStorage() {
+    storageValue = "{\n";
+    let i = 0;
+    _hives.forEach((hive) => {
+      storageValue += `"hive-${i}":`;
+      storageValue += `{\n"title": "${hive.getTitle()}",\n"color": "${hive.getColor()}",\n"index": "${hive.getIndex()}",\n"tasks": {`;
+      hive.getTasks().forEach((task) => {
+        storageValue += `"title": "${task.getTitle()}",\n"description": "${task.getDescription()}",\n"dueDate": "${task.getDueDate()}",\n"priority": "${task.getPriority()}"}\n`;
+      });
+      storageValue += "}\n}\n";
+      if (i < _hives.length - 1) {
+        storageValue += ",";
+      }
+      i++;
+    });
+    storageValue += "\n}";
+    passedStorage.setItem("hives", storageValue);
+  };
+
+  const set = function setPageFromStorage() {
+    const storedHives = JSON.parse(passedStorage.getItem("hives"));
+    for (let currentHive in storedHives) {
+      const newHive = hive(
+        storedHives[currentHive]["title"],
+        storedHives[currentHive]["color"]
+      );
+      newHive.setIndex(_hivesToBeLoaded.length);
+      for (let currentTask in storedHives[currentHive]["tasks"]) {
+        const newTask = task(
+          storedHives[currentHive]["tasks"][currentTask]["title"],
+          storedHives[currentHive]["tasks"][currentTask]["description"],
+          storedHives[currentHive]["tasks"][currentTask]["dueDate"],
+          storedHives[currentHive]["tasks"][currentTask]["priority"]
+        );
+        newHive.registerTask(newTask);
+      }
+      _hivesToBeLoaded.push(newHive);
+    }
+  };
+
+  const loadHives = function loadHivesToScreen() {
+    set();
+    _hivesToBeLoaded.forEach((hive) => {
+      renderHive(hive);
+    });
+    addHiveBtn();
+  };
+
+  const loadInitial = function () {
+    const blankHive = hive("My First Hive!", _defaultColors[6]);
+    renderHive(blankHive);
+    addHiveBtn();
   };
   return {
-    load,
+    loadInitial,
+    loadHives,
+    getHives,
   };
 };
 
