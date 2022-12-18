@@ -22,7 +22,6 @@ const renderer = function (content, passedStorage) {
     "#86efac",
     "#94a3b8",
   ];
-  let _colorRotation = 0;
   let storageValue;
 
   /**
@@ -244,8 +243,7 @@ const renderer = function (content, passedStorage) {
 
     const newHiveColor = document.createElement("input");
     newHiveColor.type = "color";
-    newHiveColor.value = _defaultColors[_colorRotation++];
-    _colorRotation = _colorRotation > 6 ? 0 : _colorRotation;
+    newHiveColor.value = _defaultColors[Math.floor(Math.random() * 6)];
     newHiveColor.classList.add("newHiveColor");
     addHiveForm.appendChild(newHiveColor);
 
@@ -350,6 +348,7 @@ const renderer = function (content, passedStorage) {
   };
 
   const set = function setPageFromStorage() {
+    console.log(passedStorage.getItem("colorNum"));
     const storedHives = JSON.parse(passedStorage.getItem("hives"));
     for (let currentHive in storedHives) {
       const newHive = hive(
